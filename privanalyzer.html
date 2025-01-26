@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Dashboard</a>
+        
+        <div class="analyzer-container">
+            <h1>Privacy Policy Analyzer</h1>
+            <p class="subtitle">Understand what data companies collect about you</p>
+            
+            <div class="input-group">
+                <label for="policy-text">Paste Privacy Policy Text</label>
+                <textarea id="policy-text" rows="10" placeholder="Paste the privacy policy text here..."></textarea>
+            </div>
+
+            <button id="analyze-btn" class="action-button">Analyze Policy</button>
+
+            <div id="results" class="results-container">
+                <div class="metric-group">
+                    <h3>Data Collection</h3>
+                    <div id="data-collection-results"></div>
+                </div>
+                <div class="metric-group">
+                    <h3>Data Sharing</h3>
+                    <div id="data-sharing-results"></div>
+                </div>
+                <div class="metric-group">
+                    <h3>User Rights</h3>
+                    <div id="user-rights-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const keywordCategories = {
+            dataCollection: {
+                personal: ['name', 'email', 'address', 'phone', 'birthday', 'age'],
+                behavioral: ['browsing', 'clicks', 'activity', 'usage', 'behavior'],
+                technical: ['IP address', 'device', 'browser', 'cookies', 'location']
+            },
+            dataSharing: {
+                thirdParty: ['third party', 'partners', 'advertisers', 'vendors'],
+                legal: ['law enforcement', 'court order', 'subpoena', 'legal'],
+                business: ['subsidiary', 'affiliate', 'merger', 'acquisition']
+            },
+            userRights: {
+                access: ['access', 'view', 'obtain', 'copy'],
+                delete: ['delete', 'remove', 'erase'],
+                control: ['opt-out', 'opt out', 'unsubscribe', 'consent']
+            }
+        };
+
+        document.getElementById('analyze-btn').addEventListener('click', analyzePolicyText);
+
+        function analyzePolicyText() {
+            const policyText = document.getElementById('policy-text').value.toLowerCase();
+            
+            const results = {
+                dataCollection: analyzeCategory(policyText, keywordCategories.dataCollection),
+                dataSharing: analyzeCategory(policyText, keywordCategories.dataSharing),
+                userRights: analyzeCategory(policyText, keywordCategories.userRights)
+            };
+
+            displayResults(results);
+        }
+
+        function analyzeCategory(text, category) {
+            const findings = {};
+            for (const [type, keywords] of Object.entries(category)) {
+                findings[type] = keywords.filter(keyword => text.includes(keyword));
+            }
+            return findings;
+        }
+
+        function displayResults(results) {
+            displayCategoryResults('data-collection-results', results.dataCollection, {
+                personal: 'Personal Information',
+                behavioral: 'Behavioral Data',
+                technical: 'Technical Data'
+            });
+
+            displayCategoryResults('data-sharing-results', results.dataSharing, {
+                thirdParty: 'Third Party Sharing',
+                legal: 'Legal Compliance',
+                business: 'Business Transfers'
+            });
+
+            displayCategoryResults('user-rights-results', results.userRights, {
+                access: 'Data Access Rights',
+                delete: 'Deletion Rights',
+                control: 'Control Options'
+            });
+        }
+
+        function displayCategoryResults(elementId, results, labels) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+
+            for (const [key, findings] of Object.entries(results)) {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                
+                const label = document.createElement('span');
+                label.className = 'result-label';
+                label.textContent = labels[key];
+
+                const status = document.createElement('span');
+                status.className = `result-status ${findings.length > 0 ? 'found' : 'not-found'}`;
+                status.textContent = findings.length > 0 ? '✓ Found' : '✗ Not Found';
+
+                item.appendChild(label);
+                item.appendChild(status);
+                container.appendChild(item);
+            }
+        }
+    </script>
+</body>
+</html>

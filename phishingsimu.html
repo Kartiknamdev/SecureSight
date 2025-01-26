@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Awareness Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Dashboard</a>
+        
+        <div class="simulator-container">
+            <h1>Phishing Awareness Simulator</h1>
+            <p class="subtitle">Learn to identify phishing attempts</p>
+
+            <div id="email-container" class="email-container">
+                <div class="email-header">
+                    <div class="email-field">
+                        <span class="field-label">From:</span>
+                        <span id="sender" class="field-value"></span>
+                    </div>
+                    <div class="email-field">
+                        <span class="field-label">Subject:</span>
+                        <span id="subject" class="field-value"></span>
+                    </div>
+                </div>
+                <div id="email-body" class="email-body"></div>
+            </div>
+
+            <div class="action-container">
+                <button id="legitimate-btn" class="action-button">Legitimate</button>
+                <button id="phishing-btn" class="action-button danger">Phishing</button>
+            </div>
+
+            <div id="feedback" class="feedback-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const phishingScenarios = [
+            {
+                sender: "security@bankofamerica.net",
+                subject: "Urgent: Your Account Has Been Suspended",
+                body: "Dear Valued Customer,\n\nWe have detected unusual activity in your account. Your account has been temporarily suspended. Click the link below to verify your identity and restore access:\n\n[Suspicious Link]",
+                isPhishing: true,
+                explanation: "Red flags: Urgent language, suspicious sender domain (.net instead of .com), generic greeting, request to click a link"
+            },
+            {
+                sender: "support@dropbox.com",
+                subject: "Your Dropbox: New sign-in from Chrome on Windows",
+                body: "We noticed a new sign-in to your Dropbox account. If this was you, you can safely ignore this message. If this wasn't you, please reset your password.",
+                isPhishing: false,
+                explanation: "Legitimate: Correct domain, no urgent action required, no suspicious links, informative content"
+            },
+            {
+                sender: "hr.department@company-careers.com",
+                subject: "Job Offer - Immediate Response Required",
+                body: "Congratulations! You've been selected for a position. To accept, please provide your social security number and bank details for direct deposit setup.",
+                isPhishing: true,
+                explanation: "Red flags: Suspicious domain, requesting sensitive information via email, urgency"
+            }
+        ];
+
+        let currentScenario = 0;
+        let score = 0;
+
+        function loadScenario() {
+            const scenario = phishingScenarios[currentScenario];
+            document.getElementById('sender').textContent = scenario.sender;
+            document.getElementById('subject').textContent = scenario.subject;
+            document.getElementById('email-body').textContent = scenario.body;
+            document.getElementById('feedback').innerHTML = '';
+        }
+
+        function checkAnswer(isPhishingGuess) {
+            const scenario = phishingScenarios[currentScenario];
+            const isCorrect = isPhishingGuess === scenario.isPhishing;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = `
+                <div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">
+                    <h3>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</h3>
+                    <p>${scenario.explanation}</p>
+                    ${currentScenario < phishingScenarios.length - 1 ? 
+                        '<button onclick="nextScenario()" class="action-button">Next Email</button>' :
+                        '<button onclick="restart()" class="action-button">Start Over</button>'}
+                </div>
+            `;
+
+            if (isCorrect) score++;
+            
+            document.getElementById('legitimate-btn').disabled = true;
+            document.getElementById('phishing-btn').disabled = true;
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            document.getElementById('legitimate-btn').disabled = false;
+            document.getElementById('phishing-btn').disabled = false;
+            loadScenario();
+        }
+
+        function restart() {
+            currentScenario = 0;
+            score = 0;
+            document.getElementById('legitimate-btn').disabled = false;
+            document.getElementById('phishing-btn').disabled = false;
+            loadScenario();
+        }
+
+        document.getElementById('legitimate-btn').addEventListener('click', () => checkAnswer(false));
+        document.getElementById('phishing-btn').addEventListener('click', () => checkAnswer(true));
+
+        loadScenario();
+    </script>
+</body>
+</html>

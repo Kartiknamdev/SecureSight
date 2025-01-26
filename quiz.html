@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">← Back to Dashboard</a>
+        
+        <div class="quiz-container">
+            <h1>Cybersecurity Quiz</h1>
+            <p class="subtitle">Test your cybersecurity knowledge</p>
+            
+            <div id="quiz">
+                <div id="question-container" class="question-container">
+                    <h2 id="question"></h2>
+                    <div id="answers" class="answers"></div>
+                </div>
+                <button id="next-btn" class="quiz-button" style="display: none;">Next Question</button>
+                <button id="start-btn" class="quiz-button">Start Quiz</button>
+                <p id="score" class="score"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is phishing?",
+                answers: [
+                    { text: "A type of fishing sport", correct: false },
+                    { text: "A cybercrime that uses disguised email as a weapon", correct: true },
+                    { text: "A computer virus", correct: false },
+                    { text: "A type of encryption", correct: false }
+                ]
+            },
+            {
+                question: "What is two-factor authentication?",
+                answers: [
+                    { text: "Using two passwords", correct: false },
+                    { text: "Using two different devices to log in", correct: false },
+                    { text: "A security process requiring two different forms of identification", correct: true },
+                    { text: "Having two email addresses", correct: false }
+                ]
+            },
+            {
+                question: "What is a strong password?",
+                answers: [
+                    { text: "Your birthday", correct: false },
+                    { text: "A combination of letters, numbers, and special characters", correct: true },
+                    { text: "Your pet's name", correct: false },
+                    { text: "The word 'password'", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const startButton = document.getElementById('start-btn');
+        const nextButton = document.getElementById('next-btn');
+        const questionContainer = document.getElementById('question-container');
+        const questionElement = document.getElementById('question');
+        const answersElement = document.getElementById('answers');
+        const scoreElement = document.getElementById('score');
+
+        startButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            setNextQuestion();
+        });
+
+        function startQuiz() {
+            startButton.style.display = 'none';
+            scoreElement.textContent = '';
+            score = 0;
+            currentQuestionIndex = 0;
+            questionContainer.style.display = 'block';
+            setNextQuestion();
+        }
+
+        function setNextQuestion() {
+            resetState();
+            if (currentQuestionIndex < questions.length) {
+                showQuestion(questions[currentQuestionIndex]);
+            } else {
+                showScore();
+            }
+        }
+
+        function showQuestion(question) {
+            questionElement.textContent = question.question;
+            question.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer.text;
+                button.classList.add('answer-btn');
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener('click', selectAnswer);
+                answersElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.style.display = 'none';
+            while (answersElement.firstChild) {
+                answersElement.removeChild(answersElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct;
+            if (correct) score++;
+            
+            Array.from(answersElement.children).forEach(button => {
+                setStatusClass(button, button.dataset.correct);
+                button.disabled = true;
+            });
+
+            if (currentQuestionIndex < questions.length - 1) {
+                nextButton.style.display = 'block';
+            } else {
+                showScore();
+            }
+        }
+
+        function setStatusClass(element, correct) {
+            if (correct) {
+                element.classList.add('correct');
+            } else {
+                element.classList.add('wrong');
+            }
+        }
+
+        function showScore() {
+            resetState();
+            questionElement.textContent = '';
+            scoreElement.textContent = `Your score: ${score} out of ${questions.length}`;
+            startButton.textContent = 'Restart Quiz';
+            startButton.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
