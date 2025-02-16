@@ -10,6 +10,17 @@
     <div class="container">
         <a href="index.html" class="back-button">← Back to Dashboard</a>
         
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        
         <div class="quiz-container">
             <h1>Cybersecurity Quiz</h1>
             <p class="subtitle">Test your cybersecurity knowledge</p>
@@ -25,7 +36,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         const questions = [
             {
@@ -54,43 +65,169 @@
                     { text: "Your pet's name", correct: false },
                     { text: "The word 'password'", correct: false }
                 ]
+            },
+            {
+                question: "What is malware?",
+                answers: [
+                    { text: "A type of software designed to harm a computer", correct: true },
+                    { text: "A hardware component", correct: false },
+                    { text: "A secure application", correct: false },
+                    { text: "A type of data encryption", correct: false }
+                ]
+            },
+            {
+                question: "What is a firewall?",
+                answers: [
+                    { text: "A physical wall to stop fires", correct: false },
+                    { text: "A security system for network protection", correct: true },
+                    { text: "An antivirus software", correct: false },
+                    { text: "A type of malware", correct: false }
+                ]
+            },
+            {
+                question: "What is ransomware?",
+                answers: [
+                    { text: "Software that locks your data and demands payment", correct: true },
+                    { text: "A type of antivirus", correct: false },
+                    { text: "A type of adware", correct: false },
+                    { text: "A secure browser extension", correct: false }
+                ]
+            },
+            {
+                question: "What does VPN stand for?",
+                answers: [
+                    { text: "Virtual Private Network", correct: true },
+                    { text: "Very Personal Network", correct: false },
+                    { text: "Virtual Protection Node", correct: false },
+                    { text: "Verified Private Network", correct: false }
+                ]
+            },
+            {
+                question: "What is a brute force attack?",
+                answers: [
+                    { text: "Using trial-and-error to guess login info", correct: true },
+                    { text: "Physically breaking a computer", correct: false },
+                    { text: "Intercepting data in transit", correct: false },
+                    { text: "Creating a strong password", correct: false }
+                ]
+            },
+            {
+                question: "What is encryption?",
+                answers: [
+                    { text: "Converting data into a secure code", correct: true },
+                    { text: "Deleting files permanently", correct: false },
+                    { text: "Copying data to another device", correct: false },
+                    { text: "Compressing files to save space", correct: false }
+                ]
+            },
+            {
+                question: "What is a DDoS attack?",
+                answers: [
+                    { text: "Overloading a system with traffic", correct: true },
+                    { text: "Defending against data breaches", correct: false },
+                    { text: "A type of encryption", correct: false },
+                    { text: "A phishing technique", correct: false }
+                ]
+            },
+            {
+                question: "What is social engineering?",
+                answers: [
+                    { text: "Manipulating people into giving up confidential info", correct: true },
+                    { text: "Building secure software", correct: false },
+                    { text: "A form of data encryption", correct: false },
+                    { text: "Creating strong passwords", correct: false }
+                ]
+            },
+            {
+                question: "What is spyware?",
+                answers: [
+                    { text: "Software that secretly monitors your activity", correct: true },
+                    { text: "A secure web browser", correct: false },
+                    { text: "An antivirus program", correct: false },
+                    { text: "A software update", correct: false }
+                ]
+            },
+            {
+                question: "What is a botnet?",
+                answers: [
+                    { text: "A network of infected computers controlled by a hacker", correct: true },
+                    { text: "A secure online network", correct: false },
+                    { text: "An antivirus program", correct: false },
+                    { text: "A type of firewall", correct: false }
+                ]
+            },
+            {
+                question: "What is SSL?",
+                answers: [
+                    { text: "Secure Sockets Layer", correct: true },
+                    { text: "Super Secure Link", correct: false },
+                    { text: "Single Security Layer", correct: false },
+                    { text: "Secure Software Login", correct: false }
+                ]
+            },
+            {
+                question: "What is a honeypot?",
+                answers: [
+                    { text: "A decoy system to lure attackers", correct: true },
+                    { text: "A type of encryption", correct: false },
+                    { text: "A secure email service", correct: false },
+                    { text: "An antivirus program", correct: false }
+                ]
+            },
+            {
+                question: "What is ransomware?",
+                answers: [
+                    { text: "Software that locks your data and demands payment", correct: true },
+                    { text: "A type of antivirus", correct: false },
+                    { text: "A type of adware", correct: false },
+                    { text: "A secure browser extension", correct: false }
+                ]
+            },
+            {
+                question: "What is a zero-day exploit?",
+                answers: [
+                    { text: "A vulnerability exploited before it is known", correct: true },
+                    { text: "A security patch released immediately", correct: false },
+                    { text: "A software update", correct: false },
+                    { text: "An antivirus program", correct: false }
+                ]
             }
         ];
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-
+    
+        let shuffledQuestions, currentQuestionIndex, score;
+    
         const startButton = document.getElementById('start-btn');
         const nextButton = document.getElementById('next-btn');
         const questionContainer = document.getElementById('question-container');
         const questionElement = document.getElementById('question');
         const answersElement = document.getElementById('answers');
         const scoreElement = document.getElementById('score');
-
+    
         startButton.addEventListener('click', startQuiz);
         nextButton.addEventListener('click', () => {
             currentQuestionIndex++;
             setNextQuestion();
         });
-
+    
         function startQuiz() {
             startButton.style.display = 'none';
             scoreElement.textContent = '';
             score = 0;
+            shuffledQuestions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
             currentQuestionIndex = 0;
             questionContainer.style.display = 'block';
             setNextQuestion();
         }
-
+    
         function setNextQuestion() {
             resetState();
-            if (currentQuestionIndex < questions.length) {
-                showQuestion(questions[currentQuestionIndex]);
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                showQuestion(shuffledQuestions[currentQuestionIndex]);
             } else {
                 showScore();
             }
         }
-
+    
         function showQuestion(question) {
             questionElement.textContent = question.question;
             question.answers.forEach(answer => {
@@ -104,31 +241,31 @@
                 answersElement.appendChild(button);
             });
         }
-
+    
         function resetState() {
             nextButton.style.display = 'none';
             while (answersElement.firstChild) {
                 answersElement.removeChild(answersElement.firstChild);
             }
         }
-
+    
         function selectAnswer(e) {
             const selectedButton = e.target;
-            const correct = selectedButton.dataset.correct;
+            const correct = selectedButton.dataset.correct === 'true';
             if (correct) score++;
-            
+    
             Array.from(answersElement.children).forEach(button => {
-                setStatusClass(button, button.dataset.correct);
+                setStatusClass(button, button.dataset.correct === 'true');
                 button.disabled = true;
             });
-
-            if (currentQuestionIndex < questions.length - 1) {
+    
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
                 nextButton.style.display = 'block';
             } else {
                 showScore();
             }
         }
-
+    
         function setStatusClass(element, correct) {
             if (correct) {
                 element.classList.add('correct');
@@ -136,12 +273,12 @@
                 element.classList.add('wrong');
             }
         }
-
+    
         function showScore() {
             resetState();
             questionElement.textContent = '';
-            scoreElement.textContent = `Your score: ${score} out of ${questions.length}`;
-            startButton.textContent = 'Restart Quiz';
+            scoreElement.textContent = `Your score: ${score} out of ${shuffledQuestions.length}`;
+            startButton.textContent = 'Retry Quiz';
             startButton.style.display = 'block';
         }
     </script>
