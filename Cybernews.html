@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber News</title>
+    <style>
+        .back-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #06b6d4;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #0891b2;
+}
+        body { font-family: sans-serif; margin: 0; padding: 20px; background: #0f172a; color: #4fc6e3; }
+        header { text-align: center; margin-bottom: 20px; font-size: 25px; }
+        .news-card { background: #12213a; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; }
+        .news-card a { text-decoration: none; color: inherit; display: block;}
+        .news-card h3 { margin-top: 0; }
+        .news-card p { font-size: 0.9em; color: #bbd28b; }
+        #news-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;} 
+        main { padding: 20px;}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cyber News</h1>
+        <a href="index.html" class="back-button">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main>
+        <div id="news-container"></div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsContainer = document.getElementById('news-container');
+            const keywordsSelect = document.getElementById('keywords');
+            const filterButton = document.getElementById('filterButton');
+            const guardianApiKey = '76ef4581-744b-4572-8099-77096a9ebbce'; // **REPLACE WITH YOUR KEY**
+
+            function fetchNews(keywords = []) {
+                let query = keywords.length > 0 ? keywords.join(' OR ') : 'cybersecurity OR technology OR ai'; // Build query
+                const apiUrl = `https://content.guardianapis.com/search?q=${query}&api-key=${guardianApiKey}&show-fields=headline,trailText,webUrl`;
+
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`); // Check for HTTP errors
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.response && data.response.results) {
+                            displayNews(data.response.results);
+                        } else {
+                            console.error("Invalid Guardian API response:", data);
+                            newsContainer.innerHTML = "<p>Error fetching news.</p>";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                        newsContainer.innerHTML = "<p>Error fetching news. Please check the console.</p>";
+                    });
+            }
+
+            function displayNews(newsItems) {
+                newsContainer.innerHTML = ''; // Clear previous news
+
+                if (!newsItems || newsItems.length === 0) {
+                    newsContainer.innerHTML = "<p>No news found.</p>";
+                    return;
+                }
+
+                newsItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.classList.add('news-card');
+
+                    const link = document.createElement('a');
+                    link.href = item.webUrl;
+                    link.target = '_blank';
+
+                    const title = document.createElement('h3');
+                    title.textContent = item.fields.headline;
+
+                    const snippet = document.createElement('p');
+                    snippet.textContent = item.fields.trailText || "No snippet available.";
+
+                    link.appendChild(title);
+                    link.appendChild(snippet);
+                    card.appendChild(link);
+                    newsContainer.appendChild(card);
+                });
+            }
+
+            fetchNews(); // Initial fetch
+
+            filterButton.addEventListener('click', () => {
+                const selectedKeywords = Array.from(keywordsSelect.selectedOptions).map(option => option.value);
+                fetchNews(selectedKeywords);
+            });
+        });
+    </script>
+</body>
+</html>
