@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Breach Check (Leak-Lookup)</title>
+    <style>
+        
+        body {
+            background-color: #0f172a;
+            color: #fff;
+            font-family: sans-serif;
+        }
+
+        .hibp-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #1e293b;
+            border-radius: 0.75rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            background-color: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .hibp-results {
+            margin-top: 1.5rem;
+            color: #fff;
+        }
+
+        .hibp-results p {
+            margin-bottom: 0.5rem;
+        }
+
+        .hibp-results a {
+            color: #06b6d4;
+            text-decoration: none;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #06b6d4;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #0891b2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hibp-container">
+        <h2>Data Breach Check (Leak-Lookup)</h2>
+        <a href="index.html" class="back-button">Back to Dashboard</a>
+        <div class="input-group">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" placeholder="Enter email address">
+        </div>
+        <button class="back-button" id="checkButton">Check</button>
+        <div class="hibp-results" id="results"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailInput = document.getElementById('email');
+            const checkButton = document.getElementById('checkButton');
+            const resultsDiv = document.getElementById('results');
+
+            checkButton.addEventListener('click', () => {
+                const email = emailInput.value;
+                if (!email) {
+                    resultsDiv.innerHTML = "<p>Please enter an email address.</p>";
+                    return;
+                }
+
+                const leakLookupApiKey = '81d792a7a87bc83f7a5d5384471b6b44'; // **REPLACE WITH YOUR API KEY**
+                const leakLookupApiUrl = `https://api.leak-lookup.com/search?email=${email}&api_key=${leakLookupApiKey}`;
+
+                fetch(leakLookupApiUrl)
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json();
+                        } else if (response.status === 404) {
+                            return null; // Email not found
+                        } else {
+                            throw new Error(`Leak-Lookup API error: ${response.status}`);
+                        }
+                    })
+                    .then(data => {
+                        resultsDiv.innerHTML = "";
+                        if (data && data.length > 0) {
+                            let breachesHtml = "<p>The following breaches were found:</p><ul>";
+                            data.forEach(breach => {
+                                breachesHtml += `<li>${breach.title}</li>`; 
+                            });
+                            breachesHtml += "</ul>";
+                            resultsDiv.innerHTML = breachesHtml;
+                        } else if (data === null) {
+                            resultsDiv.innerHTML = "<p>No breaches found for this email address.</p>";
+                        } else {
+                            resultsDiv.innerHTML = "<p>No breaches found for this email address.</p>";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error checking Leak-Lookup:", error);
+                        resultsDiv.innerHTML = "<p>Error checking for breaches. Please try again later.</p>";
+                    });
+            });
+        });
+    </script>
+
+</body>
+</html>
